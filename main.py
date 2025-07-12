@@ -11,7 +11,7 @@ load_dotenv()
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     text = update.message.text.strip().lower()
 
-    # Удалить предыдущее 👁, если было
+    # Удалить предыдущий глаз
     last_emoji_msg_id = context.user_data.get("emoji_msg_id")
     if last_emoji_msg_id:
         try:
@@ -21,18 +21,21 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         finally:
             context.user_data["emoji_msg_id"] = None
 
-    if text == "йо":
-        quote, author = get_quote()
+    if text in ("йо", "yo"):
+        lang = "ru" if text == "йо" else "en"
+        quote, author = get_quote(lang=lang)
         await update.message.reply_text(quote)
-        context.user_data["last_author"] = author
-        context.user_data["author_used"] = False  # сбрасываем флаг
+        key_prefix = "ru" if lang == "ru" else "en"
+        context.user_data[f"{key_prefix}_author"] = author
+        context.user_data[f"{key_prefix}_used"] = False
 
-    elif text == "автор":
-        author = context.user_data.get("last_author")
-        used = context.user_data.get("author_used", True)
+    elif text in ("автор", "author"):
+        key_prefix = "ru" if text == "автор" else "en"
+        author = context.user_data.get(f"{key_prefix}_author")
+        used = context.user_data.get(f"{key_prefix}_used", True)
         if author and not used:
             await update.message.reply_text(f"— {author}")
-            context.user_data["author_used"] = True
+            context.user_data[f"{key_prefix}_used"] = True
         else:
             sent = await update.message.reply_text("👁")
             context.user_data["emoji_msg_id"] = sent.message_id
