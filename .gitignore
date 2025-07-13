@@ -2,3 +2,4 @@
 **/__pycache__/
 _check.py
 cookies.txt
+.DS_Store
