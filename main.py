@@ -102,8 +102,9 @@ if __name__ == "__main__":
     if not TOKEN:
         raise RuntimeError("Переменная окружения BOT_TOKEN не установлена.")
 
-    app = ApplicationBuilder().token(TOKEN).allowed_updates(["*"]).build()
+    app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start_command))
     app.add_handler(MessageHandler(filters.Document.ALL, handle_cookie_upload))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, unified_handler))
-    app.run_polling()
+    app.run_polling(allowed_updates=["message", "document", "text"])
+
