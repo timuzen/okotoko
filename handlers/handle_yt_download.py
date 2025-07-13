@@ -40,7 +40,7 @@ async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'force_generic_extractor': False,
         'source_address': '0.0.0.0',
         'http_headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'},
-        'cookiefile': 'cookies.txt',
+        'cookiefile': '/tmp/cookies.txt',
         'socket_timeout': 60,
         'retries': 10,
     }

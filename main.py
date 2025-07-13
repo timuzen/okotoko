@@ -8,10 +8,13 @@ from telegram.ext import (
 )
 from dotenv import load_dotenv
 from services import get_quote
-from handlers import handle_link
+from handlers import handle_link, handle_cookie_upload
 
 logging.basicConfig(level=logging.INFO)
 load_dotenv()
+
+ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
+
 
 recent_responded = set()   # anti-double'/start' for mobile devices
 
@@ -99,7 +102,8 @@ if __name__ == "__main__":
     if not TOKEN:
         raise RuntimeError("Переменная окружения BOT_TOKEN не установлена.")
 
-    app = ApplicationBuilder().token(TOKEN).build()
+    app = ApplicationBuilder().token(TOKEN).allowed_updates(["*"]).build()
     app.add_handler(CommandHandler("start", start_command))
+    app.add_handler(MessageHandler(filters.Document.ALL, handle_cookie_upload))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, unified_handler))
     app.run_polling()
