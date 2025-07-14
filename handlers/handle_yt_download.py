@@ -1,7 +1,8 @@
 import os
 import glob
 import yt_dlp
-from telegram import Update
+import asyncio
+from telegram import Update, Bot
 from telegram.constants import ChatAction
 from telegram.ext import ContextTypes
 from dotenv import load_dotenv
@@ -11,6 +12,7 @@ load_dotenv()
 
 MAX_SIZE_MB = 50
 PIXELDRAIN_API_KEY = os.getenv("PIXELDRAIN_API_KEY")
+ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
 
 
 def cleanup_files():
@@ -72,6 +74,19 @@ async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_audio(audio=audio_file, title=title)
 
     except Exception as e:
-        await update.message.reply_text(f"Упс! \n\n {e}")
+        error_message = str(e)
+
+        if "Sign in to confirm you’re not a bot" in error_message:
+            await update.message.reply_text("нужна печенька")
+            await asyncio.sleep(2)
+            await update.message.reply_text("ща напишу босу\nкак поправит, отпишусь")
+        else:
+            await update.message.reply_text(f"Упс!:\n\n{error_message}")
+
+            bot: Bot = update.get_bot()
+            await bot.send_message(
+                chat_id=ADMIN_ID,
+                text=f"@{update.effective_user.username or 'неизвестный'} просит скормить печеньку"
+            )
     finally:
         cleanup_files()

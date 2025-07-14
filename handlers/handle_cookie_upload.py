@@ -19,18 +19,17 @@ async def handle_cookie_upload(update: Update, context: ContextTypes.DEFAULT_TYP
     document = update.message.document
 
     if not document or document.file_name != ENC_FILENAME:
-        await update.message.reply_text("нужна печенька в обвертке")
+        await update.message.reply_text("сорри, ем только печеньку)")
         return
 
     if not ENCRYPTION_KEY:
-        await update.message.reply_text("нечем открыть печеньку")
+        await update.message.reply_text("нечем открыть")
         return
 
     try:
         # Шаг 1 — загрузка файла
         file = await context.bot.get_file(document.file_id)
         await file.download_to_drive(ENC_PATH)
-        await update.message.reply_text("печенька получена")
 
         # Шаг 2 — расшифровка
         fernet = Fernet(ENCRYPTION_KEY.encode())
@@ -44,5 +43,5 @@ async def handle_cookie_upload(update: Update, context: ContextTypes.DEFAULT_TYP
 
         await update.message.reply_text("печенька съедена)")
     except Exception as e:
-        await update.message.reply_text(f"Упс!:\n\n{e}")
+        await update.message.reply_text(f"не могу развернуть")
 
