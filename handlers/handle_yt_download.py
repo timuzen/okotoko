@@ -76,17 +76,20 @@ async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         error_message = str(e)
 
+        bot: Bot = context.bot
+        chat_id = update.effective_chat.id
+        username = update.effective_user.username or 'неизвестный'
+
         if "Sign in to confirm you’re not a bot" in error_message:
             await update.message.reply_text("нужна печенька")
             await asyncio.sleep(2)
             await update.message.reply_text("ща напишу босу\nкак поправит, отпишусь")
-        else:
-            await update.message.reply_text(f"Упс!:\n\n{error_message}")
 
-            bot: Bot = update.get_bot()
+            # notify admin
             await bot.send_message(
                 chat_id=ADMIN_ID,
-                text=f"@{update.effective_user.username or 'неизвестный'} просит скормить печеньку"
-            )
+                text=f"@{username} просит скормить печеньку")
+        else:
+            await update.message.reply_text(f"Упс!:\n\n{error_message}")
     finally:
         cleanup_files()
