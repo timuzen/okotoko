@@ -8,3 +8,4 @@ from .redis_client import (
     unregister_chat_id,
     clear_all_chat_ids
 )
+from .notify_cookie_fixed import notify_cookie_fixed

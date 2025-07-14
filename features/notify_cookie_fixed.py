@@ -19,8 +19,14 @@ async def notify_cookie_fixed(bot: Bot):
         try:
             await bot.send_message(
                 chat_id=chat_id,
-                text="ютубчик снова в деле\nможешь кидать ссылку"
+                text="ютубчик снова в деле"
             )
+            await asyncio.sleep(3)
+            await bot.send_message(
+                chat_id=chat_id,
+                text="можно скачивать аудио по ссылке"
+            )
+
             unregister_chat_id(chat_id)
             logger.info(f"✅ Уведомлен chat_id {chat_id} и удалён из Redis")
         except Exception as e:

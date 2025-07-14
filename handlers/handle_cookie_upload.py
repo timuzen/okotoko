@@ -3,6 +3,9 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from cryptography.fernet import Fernet
 from features import notify_cookie_fixed
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 ENC_FILENAME = "cookies.enc"
@@ -46,7 +49,11 @@ async def handle_cookie_upload(update: Update, context: ContextTypes.DEFAULT_TYP
         await update.message.reply_text("печенька съедена)")
 
         # notify users
-        await notify_cookie_fixed(context.bot)
+        try:
+            await notify_cookie_fixed(context.bot)
+        except Exception as notify_error:
+            logger.warning(f"⚠️ Ошибка при уведомлении пользователей: {notify_error}")
+
 
     except Exception as e:
         await update.message.reply_text(f"не могу развернуть")
