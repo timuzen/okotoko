@@ -61,7 +61,9 @@ async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
         title = os.path.splitext(filename)[0]
 
         if file_size_mb > MAX_SIZE_MB:
-            await update.message.reply_text(f"{round(file_size_mb, 2)}МБ - не влезает в телегу\nща скину ссылку на облако...")
+            await update.message.reply_text(f"{round(file_size_mb, 2)}МБ - не влезает в телегу")
+            await asyncio.sleep(2)
+            await update.message.reply_text(f"ща скину ссылку на облако...")
 
             link = upload_to_cloud(filename, PIXELDRAIN_API_KEY)
             if link:
@@ -81,9 +83,11 @@ async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
         username = update.effective_user.username or 'неизвестный'
 
         if "Sign in to confirm you’re not a bot" in error_message:
-            await update.message.reply_text("нужна печенька")
+            await update.message.reply_text("упс, нужна печенька для работы")
             await asyncio.sleep(3)
-            await update.message.reply_text("ща напишу босу\nкак поправит, отпишусь")
+            await update.message.reply_text("ща напишу админу")
+            await asyncio.sleep(3)
+            await update.message.reply_text("как поправит, отпишусь")
 
             register_chat_id(chat_id)
 
