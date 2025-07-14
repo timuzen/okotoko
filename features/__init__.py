@@ -9,3 +9,4 @@ from .redis_client import (
     clear_all_chat_ids
 )
 from .notify_cookie_fixed import notify_cookie_fixed
+from .file_cloud import start_keep_alive_scheduler

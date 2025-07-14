@@ -7,11 +7,14 @@ from telegram.ext import (
     MessageHandler, ContextTypes, filters
 )
 from dotenv import load_dotenv
-from features import get_quote
+
+load_dotenv()
+logging.basicConfig(level=logging.INFO)
+
+from features import get_quote, start_keep_alive_scheduler
 from handlers import handle_link, handle_cookie_upload
 
-logging.basicConfig(level=logging.INFO)
-load_dotenv()
+start_keep_alive_scheduler()
 
 ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
 
