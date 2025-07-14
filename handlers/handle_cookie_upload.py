@@ -2,6 +2,8 @@ import os
 from telegram import Update
 from telegram.ext import ContextTypes
 from cryptography.fernet import Fernet
+from features import notify_cookie_fixed
+
 
 ENC_FILENAME = "cookies.enc"
 ENC_PATH = "/tmp/cookies.enc"
@@ -27,11 +29,11 @@ async def handle_cookie_upload(update: Update, context: ContextTypes.DEFAULT_TYP
         return
 
     try:
-        # Шаг 1 — загрузка файла
+        # step 1 - file download
         file = await context.bot.get_file(document.file_id)
         await file.download_to_drive(ENC_PATH)
 
-        # Шаг 2 — расшифровка
+        # step 2 - decryption
         fernet = Fernet(ENCRYPTION_KEY.encode())
 
         with open(ENC_PATH, "rb") as f:
@@ -42,6 +44,10 @@ async def handle_cookie_upload(update: Update, context: ContextTypes.DEFAULT_TYP
             f.write(decrypted_data)
 
         await update.message.reply_text("печенька съедена)")
+
+        # notify users
+        await notify_cookie_fixed(context.bot)
+
     except Exception as e:
         await update.message.reply_text(f"не могу развернуть")
 

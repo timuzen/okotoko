@@ -6,7 +6,7 @@ from telegram import Update, Bot
 from telegram.constants import ChatAction
 from telegram.ext import ContextTypes
 from dotenv import load_dotenv
-from services import upload_to_cloud
+from features import upload_to_cloud, register_chat_id
 
 load_dotenv()
 
@@ -82,8 +82,10 @@ async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if "Sign in to confirm you’re not a bot" in error_message:
             await update.message.reply_text("нужна печенька")
-            await asyncio.sleep(2)
+            await asyncio.sleep(3)
             await update.message.reply_text("ща напишу босу\nкак поправит, отпишусь")
+
+            register_chat_id(chat_id)
 
             # notify admin
             await bot.send_message(

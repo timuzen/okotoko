@@ -7,7 +7,7 @@ from telegram.ext import (
     MessageHandler, ContextTypes, filters
 )
 from dotenv import load_dotenv
-from services import get_quote
+from features import get_quote
 from handlers import handle_link, handle_cookie_upload
 
 logging.basicConfig(level=logging.INFO)
