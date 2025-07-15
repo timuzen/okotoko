@@ -54,8 +54,8 @@ async def unified_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         context.user_data[f"{key_prefix}_used"] = False
         meaningful_response = True
 
-    elif text == "чо":
-        answer = random.choice(["да", "нет"])
+    elif text in ("чо", "wha"):
+        answer = random.choice(["да", "нет"] if text == "чо" else ["yes", "no"])
         await update.message.reply_text(answer)
         meaningful_response = True
 
