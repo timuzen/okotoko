@@ -17,11 +17,12 @@ async def unified_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     print(f"[debug] raw text: {repr(text)}")
 
+    max_random_limit = 10 ** 12
     if re.fullmatch(r"[0-9]+", text):
         number = int(text)
-        if number > 0:
-            random_value = random.randint(0, number)
-            await update.message.reply_text(f"{random_value}")
+        if 0 < number <= max_random_limit:
+            random_value = random.randrange(0, number + 1)
+            await update.message.reply_text(str(random_value))
             return
 
 
