@@ -15,7 +15,7 @@ async def unified_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     text = update.message.text.strip().lower()
     chat_id = update.effective_chat.id
 
-    print(f"[debug] raw text: {repr(text)}")
+    # print(f"[debug] raw text: {repr(text)}")
 
     max_random_limit = 10 ** 12
     if re.fullmatch(r"[0-9]+", text):
@@ -52,6 +52,11 @@ async def unified_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         key_prefix = "ru" if lang == "ru" else "en"
         context.user_data[f"{key_prefix}_author"] = author
         context.user_data[f"{key_prefix}_used"] = False
+        meaningful_response = True
+
+    elif text == "чо":
+        answer = random.choice(["да", "нет"])
+        await update.message.reply_text(answer)
         meaningful_response = True
 
     elif text in ("кто", "who"):
