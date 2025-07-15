@@ -1,7 +1,6 @@
-import re
 import asyncio
+import re
 import random
-import os
 from telegram import Update
 from telegram.ext import ContextTypes
 
@@ -16,7 +15,9 @@ async def unified_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     text = update.message.text.strip().lower()
     chat_id = update.effective_chat.id
 
-    if re.fullmatch(r"\d+", text):
+    print(f"[debug] raw text: {repr(text)}")
+
+    if re.fullmatch(r"[0-9]+", text):
         number = int(text)
         if number > 0:
             random_value = random.randint(0, number)

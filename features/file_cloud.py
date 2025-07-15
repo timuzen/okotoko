@@ -8,7 +8,6 @@ import logging
 PIXELDRAIN_API_URL = 'https://pixeldrain.com/api'
 API_KEY = os.getenv("PIXELDRAIN_API_KEY")
 
-# Логгер
 logger = logging.getLogger(__name__)
 
 def keep_alive_api_key(api_key: str) -> bool:
@@ -29,7 +28,6 @@ def keep_alive_api_key(api_key: str) -> bool:
 
 
 def upload_to_cloud(filepath: str, api_key: str) -> str | None:
-    keep_alive_api_key(api_key)  # можно убрать, если используешь планировщик
 
     try:
         with open(filepath, 'rb') as f:
@@ -38,21 +36,34 @@ def upload_to_cloud(filepath: str, api_key: str) -> str | None:
                 auth=('timuzen', api_key),
                 files={'file': (os.path.basename(filepath), f)},
                 data={'name': os.path.basename(filepath)},
-                timeout=60
+                timeout=(10, 180)
             )
 
+        try:
+            json_data = response.json()
+        except ValueError:
+            logger.error("❌ Ответ не является JSON — возможно, HTML-ошибка")
+            logger.debug(f"Raw response: {response.text}")
+            return None
+
         if response.ok:
-            file_id = response.json().get("id")
+            file_id = json_data.get("id")
             if file_id:
                 url = f"https://pixeldrain.com/u/{file_id}"
                 logger.info(f"✅ Файл успешно загружен: {url}")
                 return url
             else:
-                logger.warning(f"⚠️ Успешный ответ без ID: {response.json()}")
+                logger.warning(f"⚠️ Успешный ответ без ID: {json_data}")
         else:
             logger.error(f"❌ Ошибка HTTP: {response.status_code} {response.text}")
+
+    except requests.exceptions.Timeout:
+        logger.error("⏱️ Таймаут при загрузке файла.")
+    except requests.exceptions.RequestException as e:
+        logger.error(f"📡 Ошибка сети: {e}")
     except Exception as e:
-        logger.exception(f"❌ Ошибка при загрузке файла: {e}")
+        logger.exception(f"❌ Непредвиденная ошибка при загрузке файла: {e}")
+
     return None
 
 
