@@ -24,12 +24,9 @@ def cleanup_files():
                 pass
 
 
+
 async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     url = update.message.text.strip()
-
-    if "youtube.com" not in url and "youtu.be" not in url:
-        await update.message.reply_text("скинь ссылку на ютубчик, пришлю тебе аудио дорожку")
-        return
 
     await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.RECORD_VOICE)
 
