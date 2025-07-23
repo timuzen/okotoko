@@ -21,7 +21,10 @@ async def unified_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if re.fullmatch(r"[0-9]+", text):
         number = int(text)
         if 0 < number <= max_random_limit:
-            random_value = random.randrange(0, number + 1)
+            if number == 1:
+                random_value = random.random()
+            else:
+                random_value = random.randint(1, number)
             await update.message.reply_text(str(random_value))
             return
 
@@ -57,7 +60,7 @@ async def unified_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     elif text in ("чо", "wha"):
         answer = random.choice(["да", "нет"] if text == "чо" else ["yes", "no"])
         await update.message.reply_text(answer)
-        meaningful_response = True
+        meaningful_response = False
 
     elif text in ("кто", "who"):
         key_prefix = "ru" if text == "кто" else "en"
@@ -66,7 +69,7 @@ async def unified_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         if author and not used:
             await update.message.reply_text(f"— {author}")
             context.user_data[f"{key_prefix}_used"] = True
-            meaningful_response = True
+            meaningful_response = False
         else:
             sent = await update.message.reply_text("👁")
             context.user_data["emoji_msg_id"] = sent.message_id
@@ -79,7 +82,7 @@ async def unified_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         recent_responded.add(chat_id)
 
         async def clear_flag():
-            await asyncio.sleep(2)
+            await asyncio.sleep(3)
             recent_responded.discard(chat_id)
 
         asyncio.create_task(clear_flag())
