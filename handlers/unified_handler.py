@@ -3,12 +3,15 @@ import re
 import random
 from telegram import Update
 from telegram.ext import ContextTypes
+import json
+from pathlib import Path
 
 from features import get_quote
 from handlers import handle_link
 
 
 recent_responded = set()
+help_file = Path("configs/help.json")
 
 
 async def unified_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -73,6 +76,23 @@ async def unified_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         else:
             sent = await update.message.reply_text("👁")
             context.user_data["emoji_msg_id"] = sent.message_id
+
+    elif text.lower() in ("хэлп", "help"):
+        if help_file.exists():
+            try:
+                with open(help_file, encoding="utf-8") as f:
+                    help_data = json.load(f)
+
+                help_text = (
+                                help_data.get("helpRu") if text.lower() == "хэлп"
+                                else help_data.get("helpEng")
+                            ) or "упс, нет записи в инструкции..."
+            except Exception as e:
+                help_text = f"⚠️ Ошибка чтения help.json: {e}"
+        else:
+            help_text = "упс, инструкция не найдена..."
+        await update.message.reply_text(help_text)
+        meaningful_response = True
 
     else:
         sent = await update.message.reply_text("👁")
